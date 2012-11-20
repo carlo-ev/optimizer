@@ -1,0 +1,3 @@
+SELECT name
+FROM Estudiante
+Where Estudiante.id = 12
