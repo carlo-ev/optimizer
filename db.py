@@ -1,11 +1,12 @@
 class Unit :
 
-	def __init__(self, name, *attrs):
-		self.name = name
-		self.attributes = attrs
+	def __init__(self, stats):
+		print(stats)
+		self.name = stats.pop(0)
+		self.attributes = stats
 
 	def __str__(self):
-		return "%s : %s" % (self.name, str(self.attributes))
+		return "Nombre: %s \nAtributos: %s" % (self.name, str(self.attributes))
 
 	def getContent(self):
 		return self.attributes

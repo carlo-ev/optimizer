@@ -1,3 +1,13 @@
-SELECT name
+DATABASE: Number1
+
+Estudiante
+Cuenta
+Nombre
+Apellido
+ID
+Carrera
+Edad 
+Sexo
+
+SELECT Nombre
 FROM Estudiante
-Where Estudiante.id = 12
