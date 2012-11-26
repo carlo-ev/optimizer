@@ -1,0 +1,7 @@
+<Nombre tabla1>
+indice 1
+tipo indice
+llaves diferentes
+número registros
+tamaño registro
+<nombre tabla1>

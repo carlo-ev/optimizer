@@ -1,0 +1,10 @@
+<nombre tabla1>
+campo 1 tipo
+campo 2 tipo 
+…..
+<nombre tabla1>
+<nombre tabla2>
+campo 1 tipo
+campo 2 tipo 
+…..
+<nombre tabla2>

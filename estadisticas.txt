@@ -1,0 +1,5 @@
+<nombre tabla1>
+<numero de registros>
+<tamanio del registro>
+<registros x bloque>
+<nombre tabla1>
