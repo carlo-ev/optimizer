@@ -1,0 +1,13 @@
+Estudiantes
+Id Int
+Nombre Varchar(15)
+Apellido Varchar(15)
+NumeroCuenta Int
+Carrera Varchar(15)
+
+Clases
+NumeroClase Int
+Nombre Varchar(15)
+Edificio Int
+Alumnos Int
+Maestro Varchar(15)
