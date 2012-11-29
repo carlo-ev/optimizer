@@ -1,39 +1,31 @@
-from db import Table		
+from db import Table
+from easygui import *
 
-def contains(string, keyword) :
-	words = string.split("\n")
-	for x in words :
-		if x.lower == keyword.lower :
-			return True
-	return False
+def read_tables():
+	tablas = open(fileopenbox(msg="Seleccione Archivo de Tablas",default="/home/carlo/documents/BD2/proyectobd",filetypes=["*.txt"]), "r")	
+	tbl_lines = ""
+	for line in tablas :
+		tbl_lines += line
+	tablas.close()
+	return tbl_lines.split("\n\n")
 
+def crt_tables(tb_stack):
+	tables = []
+	for x in tb_stack:
+		x.splitlines()
+		tables.append( Table(x.splitlines()) )
+	return tables
 
-estadisticas = open("/home/carlo/Documents/BD2/proyectoBD/estadisticasprueba.txt","r+")
-tablas = open("/home/carlo/Documents/BD2/proyectoBD/tablasprueba.txt", "r+")
-
-tbl_lines = ""
-for line in tablas :
-	tbl_lines += line
-
-tablas.close()
-
-raw_tables = tbl_lines.split("\n\n")
-tables = []
-for x in raw_tables:
-	x.splitlines()
-	tables.append( Table(x.splitlines()) )
-
-est_lines=""
-for line in estadisticas :
-	est_lines += line
-
-estadisticas.close()
-
-raw_stats = est_lines.split("\n\n")
-for x in raw_stats :
-	x = x.splitlines()
-	for y in tables :
-		if y.name == x[0] :
-			y.insert_prop(x)
-
-print(tables[0])
+def read_add_stats(tables):
+	estds = open(fileopenbox(msg="Seleccione Archivo de Estadisticas",default="/home/carlo/documents/BD2/proyectobd",filetypes=["*.txt"]),"r")
+	est_lines=""
+	for line in estds :
+		est_lines += line
+	estds.close()
+	raw_stats = est_lines.split("\n\n")
+	for x in raw_stats :
+		x = x.splitlines()
+		for y in tables :
+			if y.name == x[0] :
+				y.insert_prop(x)
+	return tables
