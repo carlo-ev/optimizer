@@ -1,0 +1,6 @@
+Estudiantes
+Id
+binario
+3
+500
+15
