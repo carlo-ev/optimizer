@@ -2,7 +2,8 @@ from db import Table
 from easygui import *
 
 def read_tables():
-	tablas = open(fileopenbox( msg="Seleccione Archivo de Tablas",default="/home/carlo/documents/BD2/proyectobd",filetypes=["*.txt"]), "r")	
+	#tablas = open(fileopenbox( msg="Seleccione Archivo de Tablas",default="/home/carlo/Documents/BD2/proyectoBD",filetypes=["*.txt"]), "r")	
+	tablas = open("/home/carlo/Documents/BD2/proyectoBD/tablasprueba.txt", "r")
 	tbl_lines = ""
 	for line in tablas :
 		tbl_lines += line.lower()
@@ -17,7 +18,8 @@ def crt_tables(tb_stack):
 	return tables
 
 def read_add_stats(tables):
-	estds = open(fileopenbox(msg="Seleccione Archivo de Estadisticas",default="/home/carlo/documents/BD2/proyectobd",filetypes=["*.txt"]),"r")
+	#estds = open(fileopenbox(msg="Seleccione Archivo de Estadisticas",default="/home/carlo/Documents/BD2/proyectoBD",filetypes=["*.txt"]),"r")
+	estds = open("/home/carlo/Documents/BD2/proyectoBD/estadisticasprueba.txt", "r")
 	est_lines=""
 	for line in estds :
 		est_lines += line.lower()
@@ -31,7 +33,8 @@ def read_add_stats(tables):
 	return tables
 
 def read_indices(tables):
-	indices = open(fileopenbox(msg="Seleccione Archivo de Indices",default="/home/carlo/documents/BD2/proyectobd",filetypes=["*.txt"]),"r")
+	#indices = open(fileopenbox(msg="Seleccione Archivo de Indices",default="/home/carlo/Documents/BD2/proyectoBD",filetypes=["*.txt"]),"r")
+	indices = open("/home/carlo/Documents/BD2/proyectoBD/indicesprueba.txt", "r")
 	ind_lines=""
 	for lines in indices :
 		ind_lines += lines.lower()

@@ -35,39 +35,47 @@ class Optimizer :
 
 	def val_from(tables, from_sts) :
 		print(from_sts)
-		from_sts.pop(0)
+		if len(from_sts) == 0 : return False
 		tabl_set = map(lambda x : x.name , tables)
-		return ( len( list( set(tables_set) & set(from_sts) ) ) == len(from_sts) )
+		return ( len( list( set(tabl_set) & set(from_sts) ) ) == len(from_sts) )
 
-
-	def tables_in_use(tables, from_sts) :
-		
+	def val_select(tables_used, select_sts) :
+		print(select_sts)
+		if len(select_sts)==0 : return False
+		if len(select_sts)==1 and select_sts[0] != "*" :
+			for x in select_sts :
+				x  = x.split(".")
+				print(x)
+				table = [ tab for tab in tables_used if tab.name == x[0] ]
+				print(table)
+				if  len(table)==0 : return False   
+				if (not x[1] in table[0]) or (not x[1] == "*") : return False  
+		return True
 
 	def validate(sql, db) :
-		if ( "select" in sql.lower() ) & ( "From" in sql.lower() ) :
+		if ( "select" in sql.lower() ) and ( "from" in sql.lower() ) :
 			print( "Select and From present on sql" )
 			sql = ( sql.lower() ).split(" ")
 			print(sql)
 			select_sts = []
-			for x in range( sql.index("select"), sql.index("from") ) :
+			for x in range( (sql.index("select")+1), sql.index("from") ) :
 				select_sts.append( sql[x].strip(",") )
 
 			from_sts = []
-			for x in range( sql.index("from"), sql.index("where") ) :
+			for x in range( (sql.index("from")+1), sql.index("where") ) :
 				from_sts.append(sql[x])
 
 			where_sts = []
-			for x in range( sql.index("where"), len(sql) ) :
+			for x in range( (sql.index("where")+1), len(sql) ) :
 				where_sts.append(sql[x])
 
+			if Optimizer.val_from(db, from_sts) :
+				set_tables = [tg for tg in db if tg.name in from_sts]
+				print( Optimizer.val_select(set_tables, select_sts) )
 			print(select_sts)
 			print(from_sts)
 			print(where_sts)
-			print( slct_val(db, select_sts) )
-			print( frm_val(db, from_sts) )
-
-			if val_from(db, from_sts) :
-				
+			
 
 		else :
-			False
+			print("Select/From Statement(s) not present in the SQL!!!!")
