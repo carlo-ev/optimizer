@@ -58,8 +58,11 @@ class Optimizer :
 				if (not x[1] in table[0]) or (not x[1] == "*") : return False  
 		return True
 
-		def get_table(tables, attri) :
-			for x in tables : if attri in x : return x
+	def get_type(tables, attri) :
+		for x in tables : 
+			if attri in x : 
+				return x.get_type(attri)
+		return None
 
 	def val_where(tables_used, where_sts) :
 		print(where_sts)
@@ -70,8 +73,10 @@ class Optimizer :
 		stat = [ where_sts[x:x+3] for x in range(0, ( len(where_sts)), 3)]
 		print(stat) 
 		for x in stat : if ( (x[1] not in math_op) or (x[1] not in var_op) ) : return False
-		for st in stat :
-			if (st[] )
+		for st in stat : 
+			
+				return False
+
 
 
 	def validate(sql, db) :
