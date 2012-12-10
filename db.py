@@ -19,6 +19,9 @@ class Table :
 		self.reg_size = prps[2]
 		self.reg_bloq = prps[3]
 
+	def get_type(self, attri) : 
+		return if "varchar" in self.attributes[attri] : "varchar" else : self.attributes[attri]
+
 	def print_indices(self) :
 		if self.indices :
 			print(self.indices)
@@ -32,6 +35,9 @@ class Table :
 
 
 class Optimizer :
+
+	math_op = [ "<", "=<", ">", "=>", "=" ]
+	var_op = [ "like", "in"]
 
 	def val_from(tables, from_sts) :
 		print(from_sts)
@@ -52,6 +58,22 @@ class Optimizer :
 				if (not x[1] in table[0]) or (not x[1] == "*") : return False  
 		return True
 
+		def get_table(tables, attri) :
+			for x in tables : if attri in x : return x
+
+	def val_where(tables_used, where_sts) :
+		print(where_sts)
+		if len(where_sts) not in [ 3+(x*4) for x in range(0,5)] : return False 
+		if "and" not in where_sts : return False
+		for x in range(0,where_sts.count("and")) : where_sts.remove("and")
+		print(where_sts)
+		stat = [ where_sts[x:x+3] for x in range(0, ( len(where_sts)), 3)]
+		print(stat) 
+		for x in stat : if ( (x[1] not in math_op) or (x[1] not in var_op) ) : return False
+		for st in stat :
+			if (st[] )
+
+
 	def validate(sql, db) :
 		if ( "select" in sql.lower() ) and ( "from" in sql.lower() ) :
 			print( "Select and From present on sql" )
@@ -71,7 +93,9 @@ class Optimizer :
 
 			if Optimizer.val_from(db, from_sts) :
 				set_tables = [tg for tg in db if tg.name in from_sts]
-				print( Optimizer.val_select(set_tables, select_sts) )
+				if( Optimizer.val_select(set_tables, select_sts) ) :
+					print("Select and From are OK continuing with Where")
+					Optimizer.val_where(set_tables, where_sts)
 			print(select_sts)
 			print(from_sts)
 			print(where_sts)
