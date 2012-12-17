@@ -1,7 +1,7 @@
 Estudiantes
-500
-48
-150
+10000
+2
+5
 
 Clases
 300

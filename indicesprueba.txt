@@ -1,6 +1,11 @@
 Estudiantes
 Id
-binary
-3
-15
+hash
 1
+4
+
+Estudiantes
+name
+binary
+2
+5
