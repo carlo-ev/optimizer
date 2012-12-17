@@ -11,10 +11,12 @@ class Table :
 			self.attributes[splt[0]] = splt[1]
 
 	def __str__(self):
-		atr =""
+		'''atr =""
 		for x in self.attributes :
 			atr += x + "\n"
 		return "Nombre: %s \nAtributos: %s \nRecords: %s \nRecord Size: %skb\nRecordsPerBlock: %s" % ( self.name, atr, self.reg_count, self.reg_size, self.reg_bloq)
+		'''
+		return self.name
 
 	def insert_prop(self, prps):
 		self.reg_count = int(prps[1])
@@ -128,49 +130,61 @@ class Calculations :
 	available = 0
 	
 	def individual(tables_used, statement) :
-			Calculations.available = list( filter( lambda x : x.name == statement[0][0], tables_used ) )[0].reg_count
-			return cost(tables_used, statement)
+			Calculations.available = list( filter( lambda x : x.name == statement[0].split(".")[0], tables_used ) )[0].reg_count
+			return Calculations.cost(tables_used, statement)
 
 	def cost(tables_used, statement) :
-		statement[0] = statement[0].split(".")
-		current_table = list( filter( lambda x : x.name == statement[0][0], tables_used ) )[0]
-		Calculations.available = current_table.reg_count
-		index = statement[0][1]
+		print(statement)
+		print(Calculations.available)
+		current_table = list( filter( lambda x : x.name == statement[0].split(".")[0], tables_used ) )[0]
+		if Calculations.available == 0 : Calculations.available = current_table.reg_count
+		index = statement[0].split(".")[1]
 		if index in current_table.get_indices() :
 			return Calculations.switch[current_table.get_indices()[index][0]](statement, current_table, index)
 		else :
 			return Calculations.linear_search(current_table)
 
-
 	def linear_search(table) :
+		Calculations.available = table.reg_count
 		return ( Calculations.available/table.reg_bloq)
 
 	def binary_search(statement, table, index) :
 		index_map = table.get_indices()[index]
 		if table.reg_count == index_map[1] :
+			Calculations.available = index_map[2]
 			return log( (Calculations.available/table.reg_bloq),2 ) + ceil( 1/table.reg_bloq )
 		else :
+			Calculations.available = index_map[2]
 			return log( (Calculations.available/table.reg_bloq),2 ) + ceil( (Calculations.available/index_map[1]) /table.reg_bloq ) - 1 
 
 	def primary_index(statement, table, index) :
 		index_map = table.get_indices()[index]
 		if (statement[1] in  Calculations.multiple) and (table.reg_count == index_map[1]) :
+			Calculations.available = index_map[2]
 			return (index_map[3] + ( (Calculations.available/table.reg_bloq)/2 ) )
 		else :
+			Calculations.available = index_map[2]
 			return (index_map[3] + 1)
 
 	def hash_index(statement, table, index) : 
 		index_map = table.get_indices()[index]
 		if  (statement[1] in Calculations.multiple) and (table.reg_count == index_map[1]) :
+			Calculations.available = index_map[2]
 			return 1
 		else :
+			Calculations.available = index_map[2]
 			return (Calculations.available/table.reg_bloq)
 
 	def clustering_index(statement, table, index) :
 		index_map = table.get_indices()[index]
 		if (statement[1] in Calculations.multiple) and (table.reg_count == index_map[1]) :
+			Calculations.available = index_map[2]
 			return index_map[3]
 		else :
+			Calculations.available = index_map[2]
 			return index_map[3] +  ceil( ( (Calculations.available/index_map[1]) / table.reg_bloq ) )
+
+	def reset() :
+		Calculations.available = 0
 
 	switch = { "binary" : binary_search, "primary" : primary_index, "hash" : hash_index, "cluster" : clustering_index }
