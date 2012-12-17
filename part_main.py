@@ -1,5 +1,5 @@
 import threading
-from db import Optimizer
+from db import Approval
 from easygui import * 
 import files as fl
 
@@ -21,7 +21,7 @@ db = fl.read_indices( fl.read_add_stats( fl.crt_tables( fl.read_tables() ) ) )
 sql = enterbox(msg="Insert sql Statment to be optimized: ", title="Sql Optimizer by CMEV 2012 SQL Input")
 
 
-Optimizer.validate(sql, db)
+Approval.validate(sql, db)
 
 
 ''' def statements(lst_sts) :

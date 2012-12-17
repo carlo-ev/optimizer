@@ -20,7 +20,10 @@ class Table :
 		self.reg_bloq = prps[3]
 
 	def get_type(self, attri) : 
-		return if "varchar" in self.attributes[attri] : "varchar" else : self.attributes[attri]
+		if ("varchar" in self.attributes[attri]) : 
+			return "varchar" 
+		else : 
+			return self.attributes[attri] 
 
 	def print_indices(self) :
 		if self.indices :
@@ -34,26 +37,22 @@ class Table :
 
 
 
-class Optimizer :
+class Approval :
 
 	math_op = [ "<", "=<", ">", "=>", "=" ]
 	var_op = [ "like", "in"]
 
 	def val_from(tables, from_sts) :
-		print(from_sts)
 		if len(from_sts) == 0 : return False
 		tabl_set = map(lambda x : x.name , tables)
 		return ( len( list( set(tabl_set) & set(from_sts) ) ) == len(from_sts) )
 
 	def val_select(tables_used, select_sts) :
-		print(select_sts)
 		if len(select_sts)==0 : return False
 		if len(select_sts)==1 and select_sts[0] != "*" :
 			for x in select_sts :
 				x  = x.split(".")
-				print(x)
 				table = [ tab for tab in tables_used if tab.name == x[0] ]
-				print(table)
 				if  len(table)==0 : return False   
 				if (not x[1] in table[0]) or (not x[1] == "*") : return False  
 		return True
@@ -65,46 +64,43 @@ class Optimizer :
 		return None
 
 	def val_where(tables_used, where_sts) :
-		print(where_sts)
 		if len(where_sts) not in [ 3+(x*4) for x in range(0,5)] : return False 
-		if "and" not in where_sts : return False
+		if ("and" not in where_sts) and (len(where_sts) > 3) : return False
 		for x in range(0,where_sts.count("and")) : where_sts.remove("and")
-		print(where_sts)
 		stat = [ where_sts[x:x+3] for x in range(0, ( len(where_sts)), 3)]
-		print(stat) 
-		for x in stat : if ( (x[1] not in math_op) or (x[1] not in var_op) ) : return False
-		for st in stat : 
-			
-				return False
+		for x in stat : 
+			if  not ( (x[1] in Approval.math_op) or (x[1] in Approval.var_op) ) : return False
+		print("No more validation will be made for time essentials")
+		#for st in stat : st[0] = st[0].split(".")
+		#print(stat)
+		return True
 
 
 
 	def validate(sql, db) :
-		if ( "select" in sql.lower() ) and ( "from" in sql.lower() ) :
-			print( "Select and From present on sql" )
-			sql = ( sql.lower() ).split(" ")
-			print(sql)
-			select_sts = []
-			for x in range( (sql.index("select")+1), sql.index("from") ) :
-				select_sts.append( sql[x].strip(",") )
+		print("Sql statement presented: {0}".format(sql))
+		if not  ( "select" in sql.lower() ) and ( "from" in sql.lower() ) : print("Reserved Words Select and From are not even present in sql statement!!!"); return False
+		print( "Select and From present on sql" )
+		sql = ( sql.lower() ).split(" ")
 
-			from_sts = []
-			for x in range( (sql.index("from")+1), sql.index("where") ) :
-				from_sts.append(sql[x])
+		select_sts = []
+		for x in range( (sql.index("select")+1), sql.index("from") ) :
+			select_sts.append( sql[x].strip(",") )
+		print("Select statement: {0}".format(str(select_sts)))
 
-			where_sts = []
-			for x in range( (sql.index("where")+1), len(sql) ) :
-				where_sts.append(sql[x])
+		from_sts = []
+		for x in range( (sql.index("from")+1), sql.index("where") ) :
+			from_sts.append(sql[x])
+		print("From statement: {0}".format(str(from_sts)))
 
-			if Optimizer.val_from(db, from_sts) :
-				set_tables = [tg for tg in db if tg.name in from_sts]
-				if( Optimizer.val_select(set_tables, select_sts) ) :
-					print("Select and From are OK continuing with Where")
-					Optimizer.val_where(set_tables, where_sts)
-			print(select_sts)
-			print(from_sts)
-			print(where_sts)
-			
+		where_sts = []
+		for x in range( (sql.index("where")+1), len(sql) ) :
+			where_sts.append(sql[x])
+		print("Where statement: {0}".format(str(where_sts)))
 
-		else :
-			print("Select/From Statement(s) not present in the SQL!!!!")
+		if not Approval.val_from(db, from_sts) : print("Invalid From statement \n{0}".format(from_sts)); return False
+		set_tables = [tg for tg in db if tg.name in from_sts]
+		if not Approval.val_select(set_tables, select_sts) : print("Invalid Select statement \n{0}".format(select_sts)); return False
+		if not Approval.val_where(set_tables, where_sts) : print("Invalid Where statement \n".format(where_sts)); return False
+		print("All validations passed, proceeding...")
+		return True
