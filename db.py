@@ -1,3 +1,5 @@
+from math import *
+
 class Table :
 
 	def __init__(self, name_attributes_types):
@@ -15,9 +17,9 @@ class Table :
 		return "Nombre: %s \nAtributos: %s \nRecords: %s \nRecord Size: %skb\nRecordsPerBlock: %s" % ( self.name, atr, self.reg_count, self.reg_size, self.reg_bloq)
 
 	def insert_prop(self, prps):
-		self.reg_count = prps[1]
-		self.reg_size = prps[2]
-		self.reg_bloq = prps[3]
+		self.reg_count = int(prps[1])
+		self.reg_size = int(prps[2])
+		self.reg_bloq = int(prps[3])
 
 	def get_type(self, attri) : 
 		if ("varchar" in self.attributes[attri]) : 
@@ -29,8 +31,17 @@ class Table :
 		if self.indices :
 			print(self.indices)
 
+	def get_indices(self) :
+		return self.indices
+
 	def insert_ind(self, indcs) :
-		self.indices = { indcs.pop(0) : indcs}
+		indcs.pop(0)
+		x = indcs.pop(0)
+		self.indices = { x : indcs}
+		print(self.indices)
+		self.indices[x][1] = int(self.indices[x][1])
+		self.indices[x][2] = int(self.indices[x][2])
+		self.indices[x][3] = int(self.indices[x][3])
 
 	def __contains__(self, key) :
 		return ( key in self.attributes.keys() )
@@ -41,6 +52,9 @@ class Approval :
 
 	math_op = [ "<", "=<", ">", "=>", "=" ]
 	var_op = [ "like", "in"]
+	tables_in_use = None
+	last_used_select = None
+	last_used_where = None
 
 	def val_from(tables, from_sts) :
 		if len(from_sts) == 0 : return False
@@ -73,9 +87,8 @@ class Approval :
 		print("No more validation will be made for time essentials")
 		#for st in stat : st[0] = st[0].split(".")
 		#print(stat)
+		Approval.last_used_where = stat
 		return True
-
-
 
 	def validate(sql, db) :
 		print("Sql statement presented: {0}".format(sql))
@@ -99,8 +112,65 @@ class Approval :
 		print("Where statement: {0}".format(str(where_sts)))
 
 		if not Approval.val_from(db, from_sts) : print("Invalid From statement \n{0}".format(from_sts)); return False
-		set_tables = [tg for tg in db if tg.name in from_sts]
-		if not Approval.val_select(set_tables, select_sts) : print("Invalid Select statement \n{0}".format(select_sts)); return False
-		if not Approval.val_where(set_tables, where_sts) : print("Invalid Where statement \n".format(where_sts)); return False
-		print("All validations passed, proceeding...")
+		Approval.tables_in_use = [tg for tg in db if tg.name in from_sts]
+		if not Approval.val_select(Approval.tables_in_use, select_sts) : print("Invalid Select statement \n{0}".format(select_sts)); return False
+		if not Approval.val_where(Approval.tables_in_use, where_sts) : print("Invalid Where statement \n{0}".format(where_sts)); return False
+		print("All validations passed, proceeding...")	
+		Approval.last_used_select = select_sts
+
 		return True
+
+
+
+class Calculations :
+
+	multiple = ["<",">",">=","<="]
+	available = 0
+	
+	def individual(tables_used, statement) :
+			Calculations.available = list( filter( lambda x : x.name == statement[0][0], tables_used ) )[0].reg_count
+			return cost(tables_used, statement)
+
+	def cost(tables_used, statement) :
+		statement[0] = statement[0].split(".")
+		current_table = list( filter( lambda x : x.name == statement[0][0], tables_used ) )[0]
+		Calculations.available = current_table.reg_count
+		index = statement[0][1]
+		if index in current_table.get_indices() :
+			return Calculations.switch[current_table.get_indices()[index][0]](statement, current_table, index)
+		else :
+			return Calculations.linear_search(current_table)
+
+
+	def linear_search(table) :
+		return ( Calculations.available/table.reg_bloq)
+
+	def binary_search(statement, table, index) :
+		index_map = table.get_indices()[index]
+		if table.reg_count == index_map[1] :
+			return log( (Calculations.available/table.reg_bloq),2 ) + ceil( 1/table.reg_bloq )
+		else :
+			return log( (Calculations.available/table.reg_bloq),2 ) + ceil( (Calculations.available/index_map[1]) /table.reg_bloq ) - 1 
+
+	def primary_index(statement, table, index) :
+		index_map = table.get_indices()[index]
+		if (statement[1] in  Calculations.multiple) and (table.reg_count == index_map[1]) :
+			return (index_map[3] + ( (Calculations.available/table.reg_bloq)/2 ) )
+		else :
+			return (index_map[3] + 1)
+
+	def hash_index(statement, table, index) : 
+		index_map = table.get_indices()[index]
+		if  (statement[1] in Calculations.multiple) and (table.reg_count == index_map[1]) :
+			return 1
+		else :
+			return (Calculations.available/table.reg_bloq)
+
+	def clustering_index(statement, table, index) :
+		index_map = table.get_indices()[index]
+		if (statement[1] in Calculations.multiple) and (table.reg_count == index_map[1]) :
+			return index_map[3]
+		else :
+			return index_map[3] +  ceil( ( (Calculations.available/index_map[1]) / table.reg_bloq ) )
+
+	switch = { "binary" : binary_search, "primary" : primary_index, "hash" : hash_index, "cluster" : clustering_index }

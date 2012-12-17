@@ -1,6 +1,6 @@
 Estudiantes
 500
-48kb
+48
 150
 
 Clases

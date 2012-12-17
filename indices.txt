@@ -3,5 +3,5 @@ indice 1
 tipo indice
 llaves diferentes
 número registros
-tamaño registro
+number of levels
 <nombre tabla1>

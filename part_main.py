@@ -1,5 +1,5 @@
-import threading
-from db import Approval
+import math
+from db import *
 from easygui import * 
 import files as fl
 
@@ -22,7 +22,16 @@ sql = enterbox(msg="Insert sql Statment to be optimized: ", title="Sql Optimizer
 
 
 Approval.validate(sql, db)
+tables_used = Approval.tables_in_use
+select = Approval.last_used_select
+where  = Approval.last_used_where
+print(tables_used)
+print(select)
+print(where)
 
+for statement in where :
+	print(statement)
+	print("The cost in blocks of this statement is {0}".format( ceil(Calculations.cost(tables_used, statement)) ) )
 
 ''' def statements(lst_sts) :
 	lst = lst_sts.split("and")

@@ -1,6 +1,6 @@
 Estudiantes
 Id
-binario
+binary
 3
-500
 15
+1

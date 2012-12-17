@@ -39,6 +39,7 @@ def read_indices(tables):
 	for lines in indices :
 		ind_lines += lines.lower()
 	indices.close()
+	print(ind_lines)
 	raw_ind = ind_lines.split("\n\n")
 	for x in raw_ind :
 		x = x.splitlines()
