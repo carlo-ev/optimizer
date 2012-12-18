@@ -6,7 +6,7 @@ NumeroCuenta Int
 Carrera Varchar
 
 Clases
-NumeroClase Int
+Id Int
 Nombre Varchar
 Edificio Int
 Alumnos Int

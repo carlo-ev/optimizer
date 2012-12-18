@@ -9,3 +9,9 @@ name
 binary
 2
 5
+
+Clases
+Id
+hash
+1
+4

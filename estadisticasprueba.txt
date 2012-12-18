@@ -4,6 +4,6 @@ Estudiantes
 5
 
 Clases
-300
-34
-50
+10000
+2
+5

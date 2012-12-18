@@ -5,7 +5,7 @@ class Table :
 	def __init__(self, name_attributes_types):
 		self.name = name_attributes_types.pop(0)
 		self.attributes = {}
-		self.indices = None
+		self.indices = {}
 		for x in name_attributes_types :
 			splt = x.split()
 			self.attributes[splt[0]] = splt[1]
@@ -39,11 +39,15 @@ class Table :
 		return self.indices
 
 	def insert_ind(self, indcs) :
+		print(indcs)
 		indcs.pop(0)
 		x = indcs.pop(0)
-		self.indices = { x : indcs}
+		print(x)
+		print(indcs)
+		self.indices[x] = indcs
 		self.indices[x][1] = int(self.indices[x][1])
 		self.indices[x][2] = int(self.indices[x][2])
+		print(self.indices)
 
 	def __contains__(self, key) :
 		return ( key in self.attributes.keys() )
